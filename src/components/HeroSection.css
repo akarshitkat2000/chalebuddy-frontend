@@ -1,0 +1,494 @@
+/* ═══════════════════════════════════════════════════════════════════
+   ChaleBuddy — HeroSection.css
+   Premium video-background hero with seamless left-fade mask
+═══════════════════════════════════════════════════════════════════ */
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;0,800;1,700;1,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+
+/* ── Tokens ── */
+:root {
+  --navy:        #060d1a;
+  --navy-80:     rgba(6, 13, 26, 0.80);
+  --navy-50:     rgba(6, 13, 26, 0.50);
+  --orange:      #eb6e32;
+  --orange-glow: rgba(235, 110, 50, 0.45);
+  --white:       #ffffff;
+  --white-70:    rgba(255, 255, 255, 0.70);
+  --white-40:    rgba(255, 255, 255, 0.40);
+  --white-12:    rgba(255, 255, 255, 0.12);
+  --white-06:    rgba(255, 255, 255, 0.06);
+  --border:      rgba(255, 255, 255, 0.11);
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+
+  --nav-h:   68px;
+  --r-pill:  999px;
+  --r-lg:    18px;
+  --r-sm:    10px;
+
+  /* animation easing */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ═══════════════════════════════════════
+   RESET / BASE
+═══════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ═══════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════ */
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes float-bob {
+  0%, 100% { transform: translateY(0px);  }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(235, 110, 50, 0.6);  }
+  60%       { box-shadow: 0 0 0 7px rgba(235, 110, 50, 0.0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes stat-count-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ═══════════════════════════════════════
+   SECTION
+═══════════════════════════════════════ */
+.cb-hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding-top: var(--nav-h);
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--white);
+}
+
+/* ═══════════════════════════════════════
+   VIDEO LAYER
+═══════════════════════════════════════ */
+.cb-video-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* CRITICAL: clip-path ko hata diya taaki video restrict na ho */
+  overflow: hidden; 
+  width: 100%;
+  height: 100%;
+}
+
+.cb-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Video ko container se 20% bada rakhenge taaki bars aur watermark dono gayab ho jayein */
+  min-width: 115%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  /* Perfect centering aur zoom effect */
+  transform: translate(-50%, -50%) scale(1.2); 
+  object-fit: cover;
+  filter: brightness(0.9) contrast(1.2) saturate(1);
+  will-change: transform;
+}
+
+/* LEFT FADE — removed. Video is fully visible. */
+.cb-video-fade-left {
+  display: none;
+}
+
+/* Vignette — very subtle top/bottom only, no dark box */
+.cb-video-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(6, 13, 26, 0.45)  0%,
+      transparent            18%
+    ),
+    linear-gradient(
+      to top,
+      rgba(6, 13, 26, 0.65)  0%,
+      transparent            22%
+    );
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════
+   REVEAL ANIMATION SYSTEM
+   Elements start hidden; .cb-reveal triggers float-up.
+═══════════════════════════════════════ */
+.cb-pill,
+.cb-h1,
+.cb-sub,
+.cb-btns,
+.cb-stats {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity  0.75s var(--ease-out),
+    transform 0.75s var(--ease-out);
+}
+
+.cb-reveal {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* ═══════════════════════════════════════
+   CONTENT BLOCK (left column)
+═══════════════════════════════════════ */
+.cb-content {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem clamp(1.5rem, 6vw, 7rem) 2rem;
+  max-width: 660px;
+}
+
+/* ── Pill badge ── */
+.cb-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: fit-content;
+  padding: 7px 18px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  background: rgba(6, 13, 26, 0.45);        /* slight dark tint so text pops */
+  backdrop-filter: blur(16px);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  color: rgba(255,255,255,0.88);
+  margin-bottom: 1.75rem;
+  animation: float-bob 6s ease-in-out infinite 1.2s;
+}
+
+.cb-pill-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
+  animation: pulse-dot 2.2s ease-in-out infinite;
+}
+
+/* ── Headline ── */
+.cb-h1 {
+  font-family: var(--font-display);
+ font-size: clamp(2.8rem, 6.5vw, 6rem);
+  font-weight: 800;
+  line-height: 0.92;          /* tight — two lines feel like one unit */
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.02em;                /* minimal gap between lines */
+ 
+  
+}
+
+.cb-h1-white {
+  font-style: Bold;
+  display: block;
+  background: linear-gradient(
+    105deg,
+    var(--orange)  30%,
+    #f5a06a        50%,
+    var(--orange)  70%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+  /* shadow via drop-filter since text-fill is transparent */
+  filter: drop-shadow(0 5px 12px rgba(0,0,0,0.5));
+    
+}
+
+.cb-h1-orange {
+  font-style:Bold;
+  display: block;
+  background: linear-gradient(
+    105deg,
+    var(--orange)  30%,
+    #f5a06a        50%,
+    var(--orange)  70%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+  /* shadow via drop-filter since text-fill is transparent */
+  filter: drop-shadow(0 3px 12px rgba(0,0,0,0.5));
+}
+
+/* ── Sub ── */
+.cb-sub {
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  font-weight: 400;
+  line-height: 1.78;
+  color: rgba(255, 255, 255, 0.88);   /* slightly brighter — no dark bg behind */
+  max-width: 420px;
+  margin-bottom: 2.5rem;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6), 0 2px 20px rgba(0,0,0,0.4);
+}
+
+.cb-sub strong {
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* ── Buttons ── */
+.cb-btns {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Ghost / outline button */
+.cb-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 13px 26px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform  0.25s ease;
+}
+
+.cb-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-2px);
+}
+
+.cb-btn-outline:active {
+  transform: translateY(0);
+}
+
+/* Orange CTA button */
+.cb-btn-orange {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 13px 28px;
+  border-radius: var(--r-pill);
+  border: none;
+  background: var(--orange);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  /* Glow effect */
+  box-shadow:
+    0 6px 24px var(--orange-glow),
+    0 2px  8px rgba(0,0,0,0.3);
+  transition:
+    background   0.25s ease,
+    box-shadow   0.25s ease,
+    transform    0.25s ease;
+}
+
+.cb-btn-orange:hover {
+  background: #d45e22;
+  box-shadow:
+    0 10px 36px rgba(235, 110, 50, 0.62),
+    0  4px 12px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.cb-btn-orange:active {
+  transform: translateY(0) scale(1);
+}
+
+/* ═══════════════════════════════════════
+   STATS BAR (bottom)
+═══════════════════════════════════════ */
+.cb-stats {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 1.4rem clamp(1.5rem, 6vw, 7rem);
+  /* no dark box — just a very subtle bottom gradient already from vignette */
+  background: rgba(6, 13, 26, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+}
+
+.cb-stat-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.cb-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0 2.2rem 0 0;
+  /* Stagger via custom property set in JSX or nth-child */
+}
+
+/* Stagger stats on reveal */
+.cb-stats.cb-reveal .cb-stat-wrap:nth-child(1) .cb-stat { animation: stat-count-in 0.55s var(--ease-out) 0.00s both; }
+.cb-stats.cb-reveal .cb-stat-wrap:nth-child(2) .cb-stat { animation: stat-count-in 0.55s var(--ease-out) 0.10s both; }
+.cb-stats.cb-reveal .cb-stat-wrap:nth-child(3) .cb-stat { animation: stat-count-in 0.55s var(--ease-out) 0.20s both; }
+.cb-stats.cb-reveal .cb-stat-wrap:nth-child(4) .cb-stat { animation: stat-count-in 0.55s var(--ease-out) 0.30s both; }
+
+.cb-stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.8vw, 2.1rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+}
+
+.cb-stat-label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cb-stat-line {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.70);   /* brighter than before */
+  line-height: 1.25;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+
+.cb-stat-sep {
+  width: 1px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.13);
+  flex-shrink: 0;
+  margin-right: 2.2rem;
+}
+
+/* Scroll hint */
+.cb-scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: auto;
+}
+
+.cb-scroll-line {
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 1px;
+}
+
+.cb-scroll-text {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--white-40);
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+
+/* Tablet — tighten video to right half */
+@media (max-width: 1024px) {
+  .cb-video { width: 72%; }
+  .cb-content { max-width: 580px; }
+}
+
+/* Mobile — video full bleed, darker for readability */
+@media (max-width: 768px) {
+  .cb-video {
+    width: 100%;
+    filter: brightness(0.45) saturate(0.7);
+  }
+
+  .cb-content {
+    max-width: 100%;
+    padding: 3rem 1.5rem 1.5rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .cb-h1 { align-items: center; }
+  .cb-sub { text-align: center; }
+  .cb-btns { justify-content: center; }
+  .cb-pill { margin-left: auto; margin-right: auto; }
+
+  /* Stats — compact on mobile */
+  .cb-stats {
+    flex-wrap: wrap;
+    gap: 1rem 0;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .cb-stat { padding: 0 1.25rem 0 0; }
+  .cb-stat-sep { margin-right: 1.25rem; height: 26px; }
+  .cb-scroll-hint { display: none; }
+}
+
+@media (max-width: 480px) {
+  .cb-h1 {
+    font-size: clamp(3rem, 12vw, 3.8rem);
+  }
+  .cb-stat-num {
+    font-size: 1.4rem;
+  }
+}
