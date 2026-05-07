@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://chalebuddy-backend.onrender.com', // Localhost ki jagah Render ka link use karein
+        target: 'https://chalebuddy-backend.onrender.com/api', // Localhost ki jagah Render ka link use karein
         changeOrigin: true,
       },
     },
