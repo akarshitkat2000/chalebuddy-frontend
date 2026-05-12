@@ -8,7 +8,6 @@ const ALL_TAGS = [
   "🏔️ Trekking","🎵 Music & Dance",
 ];
 
-/* ── Join Trip Modal ─────────────────────────────────────── */
 function JoinModal({ trip, onClose }) {
   const [form,    setForm]    = useState({ name:"", message:"" });
   const [loading, setLoading] = useState(false);
@@ -67,13 +66,12 @@ function JoinModal({ trip, onClose }) {
   );
 }
 
-/* ── Main Page ───────────────────────────────────────────── */
 export default function CreateTripPage() {
   const [trips,     setTrips]     = useState([]);
   const [loading,   setLoading]   = useState(true);
   const [posting,   setPosting]   = useState(false);
   const [joinModal, setJoinModal] = useState(null);
-  const [posted,    setPosted]    = useState(null); // created trip
+  const [posted,    setPosted]    = useState(null);
   const [error,     setError]     = useState("");
   const [bTab,      setBTab]      = useState("All");
 
@@ -89,7 +87,6 @@ export default function CreateTripPage() {
     interests: p.interests.includes(t) ? p.interests.filter(x => x !== t) : [...p.interests, t],
   }));
 
-  // Fetch existing trips
   useEffect(() => {
     tripsAPI.getAll({ limit: 20, sort: "-createdAt" })
       .then(res => setTrips(res.trips || res.data?.trips || []))
@@ -123,16 +120,40 @@ export default function CreateTripPage() {
 
   return (
     <>
-      {/* Hero */}
-      <div className="ct-hero-bar">
-        <div>
-          <h1>Map Your Soul's Journey</h1>
-          <p>Post your trip and find verified travel buddies heading the same way.</p>
-        </div>
+      {/* ── Hero — CENTERED ── */}
+      <div style={{
+        background: "linear-gradient(135deg,#060d1a,#0d2240)",
+        paddingTop: "calc(var(--nav-h) + 3rem)",
+        paddingBottom: "3rem",
+        paddingLeft: "1.5rem",
+        paddingRight: "1.5rem",
+        textAlign: "center",
+      }}>
+        <span className="eyebrow" style={{ color:"rgba(240,123,36,.8)", justifyContent:"center" }}>
+          Find Your Travel Buddy
+        </span>
+        <h1 style={{
+          fontFamily: "var(--font-display)",
+          fontSize: "clamp(2rem,4vw,3.5rem)",
+          color: "white",
+          margin: ".75rem auto 1rem",
+          lineHeight: 1.15,
+        }}>
+          Map Your Soul's Journey
+        </h1>
+        <p style={{
+          color: "rgba(255,255,255,.6)",
+          fontSize: "1rem",
+          lineHeight: 1.75,
+          maxWidth: 520,
+          margin: "0 auto",
+        }}>
+          Post your trip and find verified travel buddies heading the same way.
+        </p>
       </div>
 
       <div className="ct-layout">
-        {/* ── Post Trip Form ───────────────────────────────── */}
+        {/* ── Post Trip Form ── */}
         <div className="ct-panel">
           <h2>Post Your Trip</h2>
           <p style={{ color:"var(--stone)", fontSize:".85rem", marginBottom:"1.5rem" }}>
@@ -149,7 +170,10 @@ export default function CreateTripPage() {
               <p style={{ color:"var(--stone)", fontSize:".85rem", marginBottom:"1.5rem" }}>
                 Ref ID: <code style={{ background:"var(--cream-dark)", padding:"2px 8px", borderRadius:4 }}>{posted._id?.slice(-8).toUpperCase()}</code>
               </p>
-              <button className="btn btn-ghost-teal" onClick={() => { setPosted(null); setForm({ creatorName:"", destination:"", travelDate:"", duration:"1–3 Days", budget:"Budget (Below ₹5k)", interests:["🛕 Ancient Temples"], description:"", maxBuddies:"3", gender:"Any" }); }}>
+              <button className="btn btn-ghost-teal" onClick={() => {
+                setPosted(null);
+                setForm({ creatorName:"", destination:"", travelDate:"", duration:"1–3 Days", budget:"Budget (Below ₹5k)", interests:["🛕 Ancient Temples"], description:"", maxBuddies:"3", gender:"Any" });
+              }}>
                 Post Another Trip
               </button>
             </div>
@@ -216,25 +240,23 @@ export default function CreateTripPage() {
           )}
         </div>
 
-        
-       {/* ── Live Trips Feed ──────────────────────────────── */}
-<div>
-  <div className="ct-panel">
-    <div className="buddy-header">
-      <div style={{ fontFamily:"var(--font-display)", fontSize:"1.1rem", color:"var(--charcoal)" }}>
-        {/* 'total' ki jagah 'trips.length' use karein */}
-        Live Trips {trips.length > 0 && (
-          <span style={{ fontSize:".8rem", color:"var(--stone)", fontFamily:"var(--font-body)" }}>
-            ({trips.length} found)
-          </span>
-        )}
-      </div>
-      <div className="buddy-tabs">
-        {["All","Male","Female"].map(t => (
-          <button key={t} className={`btab ${bTab === t ? "active" : ""}`} onClick={() => setBTab(t)}>{t}</button>
-        ))}
-      </div>
-    </div>
+        {/* ── Live Trips Feed ── */}
+        <div>
+          <div className="ct-panel">
+            <div className="buddy-header">
+              <div style={{ fontFamily:"var(--font-display)", fontSize:"1.1rem", color:"var(--charcoal)" }}>
+                Live Trips {trips.length > 0 && (
+                  <span style={{ fontSize:".8rem", color:"var(--stone)", fontFamily:"var(--font-body)" }}>
+                    ({trips.length} found)
+                  </span>
+                )}
+              </div>
+              <div className="buddy-tabs">
+                {["All","Male","Female"].map(t => (
+                  <button key={t} className={`btab ${bTab === t ? "active" : ""}`} onClick={() => setBTab(t)}>{t}</button>
+                ))}
+              </div>
+            </div>
             {loading ? (
               <div style={{ textAlign:"center", padding:"2rem", color:"var(--stone)" }}>Loading trips…</div>
             ) : filteredTrips.length === 0 ? (

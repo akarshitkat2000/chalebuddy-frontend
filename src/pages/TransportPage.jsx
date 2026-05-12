@@ -3,10 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { TRANSPORT_DATA, showToast } from "../data";
 import { transportAPI, bookingsAPI } from "../services/api";
 
-/* ══════════════════════════════════════════
-   TICKET MODAL — no duplicate warnings
-   Transport = COD, confirmed instantly
-══════════════════════════════════════════ */
 function TicketModal({ result, onClose }) {
   const navigate   = useNavigate();
   const [form,    setForm]    = useState({ name:"", email:"", phone:"", passengers:"1" });
@@ -23,9 +19,7 @@ function TicketModal({ result, onClose }) {
     if (!form.name.trim() || !form.email.trim()) {
       setError("Please fill Name and Email."); return;
     }
-    // Demo data — orange box already shows the warning, just return silently
     if (!isRealId) return;
-
     setLoading(true); setError("");
     try {
       const res = await bookingsAPI.create({
@@ -59,7 +53,6 @@ function TicketModal({ result, onClose }) {
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
 
-        {/* ONE warning — only if demo data */}
         {!isRealId && (
           <div style={{ background:"#FFF7ED", border:"1px solid #FED7AA", borderRadius:"var(--r)",
             padding:".75rem 1rem", marginBottom:"1rem", fontSize:".82rem", color:"#92400E" }}>
@@ -67,7 +60,6 @@ function TicketModal({ result, onClose }) {
           </div>
         )}
 
-        {/* API error only — not demo warning */}
         {error && (
           <div style={{ background:"#FEF2F2", border:"1px solid #FECACA", borderRadius:"var(--r)",
             padding:".75rem 1rem", marginBottom:"1rem", color:"#DC2626", fontSize:".84rem" }}>
@@ -75,7 +67,6 @@ function TicketModal({ result, onClose }) {
           </div>
         )}
 
-        {/* Route card */}
         <div style={{ background:"var(--cream)", borderRadius:"var(--r)", padding:"1rem",
           marginBottom:"1rem", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
           <div style={{ textAlign:"center" }}>
@@ -115,7 +106,6 @@ function TicketModal({ result, onClose }) {
           </div>
         </div>
 
-        {/* Price summary */}
         <div style={{ background:"var(--cream)", borderRadius:"var(--r)", padding:"1rem", marginBottom:"1.25rem" }}>
           <div style={{ display:"flex", justifyContent:"space-between", fontSize:".85rem", color:"var(--stone)", marginBottom:".35rem" }}>
             <span>₹{result.price.toLocaleString("en-IN")} × {form.passengers} passenger(s)</span>
@@ -142,21 +132,17 @@ function TicketModal({ result, onClose }) {
   );
 }
 
-/* ══════════════════════════════════════════
-   MAIN PAGE
-══════════════════════════════════════════ */
 export default function TransportPage() {
   const [tab,         setTab]         = useState("train");
   const [loading,     setLoading]     = useState(false);
   const [results,     setResults]     = useState(TRANSPORT_DATA.train || []);
-  const [searched,    setSearched]    = useState(false);
   const [ticketModal, setTicketModal] = useState(null);
   const [search,      setSearch]      = useState({ from:"", to:"", date:"" });
 
   const changeSearch = f => e => setSearch(p => ({ ...p, [f]: e.target.value }));
 
   const doSearch = async () => {
-    setLoading(true); setSearched(true);
+    setLoading(true);
     try {
       const res = await transportAPI.getAll({ mode: tab, from: search.from, to: search.to });
       const data = res.transport || res.data?.transport;
@@ -170,7 +156,6 @@ export default function TransportPage() {
   const switchTab = t => {
     setTab(t);
     setResults(TRANSPORT_DATA[t] || []);
-    setSearched(false);
   };
 
   const TABS = [
@@ -187,26 +172,42 @@ export default function TransportPage() {
 
   return (
     <>
-      {/* Hero */}
-      <div style={{ background:"linear-gradient(135deg,#060d1a,#0D4C7A)", paddingTop:"var(--nav-h)" }}>
-        <div className="tp-hero-wrap">
-          <div className="tp-hero-text">
-            <span className="eyebrow" style={{ color:"rgba(240,123,36,.85)" }}>Real-time Booking</span>
-            <h1 style={{ fontFamily:"var(--font-display)", color:"white",
-              fontSize:"clamp(2rem,4vw,3.2rem)", margin:".5rem 0 1rem", lineHeight:1.15 }}>
-              Travel India<br /><em style={{ color:"var(--orange)" }}>Your Way.</em>
-            </h1>
-            <p style={{ color:"rgba(255,255,255,.65)", fontSize:".95rem",
-              lineHeight:1.7, maxWidth:480, marginBottom:"1.5rem" }}>
-              Trains, buses, flights — book your next journey in seconds.
-            </p>
-          </div>
-        </div>
+      {/* ── Hero — CENTERED ── */}
+      <div style={{
+        background: "linear-gradient(135deg,#060d1a,#0D4C7A)",
+        paddingTop: "calc(var(--nav-h) + 3rem)",
+        paddingBottom: "3rem",
+        paddingLeft: "1.5rem",
+        paddingRight: "1.5rem",
+        textAlign: "center",
+      }}>
+        <span className="eyebrow" style={{ color:"rgba(240,123,36,.85)", justifyContent:"center" }}>
+          Real-time Booking
+        </span>
+        <h1 style={{
+          fontFamily: "var(--font-display)",
+          color: "white",
+          fontSize: "clamp(2rem,4vw,3.2rem)",
+          margin: ".75rem auto 1rem",
+          lineHeight: 1.15,
+        }}>
+          Travel India<br />
+          <em style={{ color:"var(--orange)", fontStyle:"italic" }}>Your Way.</em>
+        </h1>
+        <p style={{
+          color: "rgba(255,255,255,.65)",
+          fontSize: ".95rem",
+          lineHeight: 1.7,
+          maxWidth: 480,
+          margin: "0 auto 2.5rem",
+        }}>
+          Trains, buses, flights — book your next journey in seconds. Best fares, real seats.
+        </p>
 
         {/* Search box */}
-        <div style={{ maxWidth:960, margin:"0 auto", padding:"0 1.5rem 2rem" }}>
+        <div style={{ maxWidth:960, margin:"0 auto" }}>
           <div style={{ background:"white", borderRadius:"var(--r-xl)", padding:"1.5rem", boxShadow:"var(--sh-lg)" }}>
-            <div style={{ display:"flex", gap:".5rem", marginBottom:"1.25rem" }}>
+            <div style={{ display:"flex", gap:".5rem", marginBottom:"1.25rem", justifyContent:"center" }}>
               {TABS.map(t => (
                 <button key={t.id} onClick={() => switchTab(t.id)} style={{
                   padding:"9px 20px", borderRadius:"var(--r-pill)", fontFamily:"var(--font-body)",
@@ -252,7 +253,8 @@ export default function TransportPage() {
         <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
           {loading ? (
             [1,2,3].map(i => (
-              <div key={i} style={{ height:100, background:"linear-gradient(90deg,var(--cream-dark) 25%,var(--cream) 50%,var(--cream-dark) 75%)",
+              <div key={i} style={{ height:100,
+                background:"linear-gradient(90deg,var(--cream-dark) 25%,var(--cream) 50%,var(--cream-dark) 75%)",
                 backgroundSize:"200% 100%", animation:"shimmer 1.5s infinite", borderRadius:"var(--r-xl)" }} />
             ))
           ) : results.map((r, i) => {
